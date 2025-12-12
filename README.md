@@ -36,7 +36,7 @@ Get started in 5 minutes:
 
 3. **Verify installation**:
    ```bash
-   python verify_installation.py
+   python scripts/verify_installation.py
    ```
 
 4. **Download dataset** from [Kaggle](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd)
@@ -346,7 +346,7 @@ print("\nAll required packages are installed successfully!")
 
 Save this as `verify_installation.py` and run:
 ```bash
-python verify_installation.py
+python scripts/verify_installation.py
 ```
 
 ## Usage
