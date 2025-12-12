@@ -10,6 +10,7 @@ A real-time drowsiness detection system that uses Convolutional Neural Networks 
 
 ## Table of Contents
 
+- [Quick Start Guide](#quick-start-guide)
 - [Overview](#overview)
 - [Features](#features)
 - [Dataset](#dataset)
@@ -19,6 +20,39 @@ A real-time drowsiness detection system that uses Convolutional Neural Networks 
 - [Results](#results)
 - [Project Structure](#project-structure)
 - [License](#license)
+
+## Quick Start Guide
+
+Get started in 5 minutes:
+
+1. **Install Python 3.8+** for your OS ([Linux](#linux-ubuntudebianfedora) | [Windows](#windows) | [macOS](#macos))
+
+2. **Clone and setup**:
+   ```bash
+   git clone <repository-url>
+   cd Drowsiness-Detection
+   pip install -r requirements.txt
+   ```
+
+3. **Verify installation**:
+   ```bash
+   python verify_installation.py
+   ```
+
+4. **Download dataset** from [Kaggle](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd)
+
+5. **Train model**:
+   ```bash
+   jupyter notebook drowsiness_detection.ipynb
+   # Update data_dir in Cell 2, then run all cells
+   ```
+
+6. **Run real-time detection** (using pre-trained model):
+   ```bash
+   python run_detection.py  # Press 'q' to quit
+   ```
+
+For detailed instructions, see the [Installation](#installation) section below.
 
 ## Overview
 
@@ -75,70 +109,450 @@ The drowsiness detection model is built using TensorFlow/Keras with the followin
 
 ## Installation
 
-### Prerequisites
+### System Requirements
 
-- Python 3.7+
-- TensorFlow 2.x
-- OpenCV
-- NumPy
-- Matplotlib
+- **Python**: 3.7 or higher (recommended: Python 3.8-3.11)
+- **RAM**: Minimum 4GB (8GB recommended for training)
+- **Webcam**: Required for real-time detection
+- **Storage**: At least 5GB for dataset and models
 
-### Setup Instructions
+### Required Packages
 
-1. Clone the repository:
+The following Python packages are required:
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| tensorflow | 2.x (>=2.10.0) | Deep learning framework |
+| opencv-python | >=4.5.0 | Computer vision and webcam processing |
+| numpy | >=1.19.0 | Numerical computations |
+| matplotlib | >=3.3.0 | Data visualization |
+| jupyter | >=1.0.0 | Interactive notebook environment |
+| ipykernel | >=6.0.0 | Jupyter kernel support |
+
+### Installation Instructions by Operating System
+
+#### Linux (Ubuntu/Debian/Fedora)
+
+**Step 1: Install Python and pip**
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install python3 python3-pip python3-venv
+
+# Fedora
+sudo dnf install python3 python3-pip
+```
+
+**Step 2: Install system dependencies for OpenCV**
+```bash
+# Ubuntu/Debian
+sudo apt install libgl1-mesa-glx libglib2.0-0 libsm6 libxext6 libxrender-dev
+
+# Fedora
+sudo dnf install mesa-libGL glib2 libSM libXext libXrender
+```
+
+**Step 3: Clone the repository**
 ```bash
 git clone <repository-url>
 cd Drowsiness-Detection
 ```
 
-2. Install required dependencies:
+**Step 4: Create a virtual environment (recommended)**
 ```bash
-pip install tensorflow opencv-python numpy matplotlib
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-3. Download the dataset:
-   - Download the [Driver Drowsiness Dataset (DDD)](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd) from Kaggle
-   - Extract the dataset to your preferred location
-   - Update the `data_dir` path in the notebook
+**Step 5: Install Python packages**
+```bash
+pip install --upgrade pip
+pip install tensorflow opencv-python numpy matplotlib jupyter ipykernel
+```
+
+**Step 6: Verify webcam access**
+```bash
+# Check if webcam is available
+ls /dev/video*
+```
+
+---
+
+#### Windows
+
+**Step 1: Install Python**
+- Download Python from [python.org](https://www.python.org/downloads/)
+- During installation, check "Add Python to PATH"
+- Recommended: Python 3.8-3.11
+
+**Step 2: Open Command Prompt or PowerShell**
+```cmd
+# Verify Python installation
+python --version
+pip --version
+```
+
+**Step 3: Clone the repository**
+```cmd
+git clone <repository-url>
+cd Drowsiness-Detection
+```
+
+**Step 4: Create a virtual environment (recommended)**
+```cmd
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Step 5: Install Python packages**
+```cmd
+pip install --upgrade pip
+pip install tensorflow opencv-python numpy matplotlib jupyter ipykernel
+```
+
+**Step 6: Install Visual C++ Redistributables** (if needed)
+- TensorFlow may require [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+
+**Note for Windows**: If you encounter webcam access issues, ensure your antivirus/firewall allows Python to access the camera.
+
+---
+
+#### macOS
+
+**Step 1: Install Homebrew** (if not already installed)
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+**Step 2: Install Python**
+```bash
+brew install python@3.11
+```
+
+**Step 3: Clone the repository**
+```bash
+git clone <repository-url>
+cd Drowsiness-Detection
+```
+
+**Step 4: Create a virtual environment (recommended)**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Step 5: Install Python packages**
+```bash
+pip install --upgrade pip
+pip install tensorflow opencv-python numpy matplotlib jupyter ipykernel
+```
+
+**Step 6: Grant camera permissions**
+- Go to System Preferences → Security & Privacy → Camera
+- Allow Terminal (or your IDE) to access the camera
+
+**Note for Apple Silicon (M1/M2/M3 Macs)**:
+```bash
+# Install TensorFlow optimized for Apple Silicon
+pip install tensorflow-macos tensorflow-metal
+pip install opencv-python numpy matplotlib jupyter ipykernel
+```
+
+---
+
+### Alternative: Using requirements.txt
+
+Create a `requirements.txt` file with the following content:
+
+```
+tensorflow>=2.10.0
+opencv-python>=4.5.0
+numpy>=1.19.0
+matplotlib>=3.3.0
+jupyter>=1.0.0
+ipykernel>=6.0.0
+```
+
+Then install all packages at once:
+
+**Linux/macOS:**
+```bash
+pip install -r requirements.txt
+```
+
+**Windows:**
+```cmd
+pip install -r requirements.txt
+```
+
+---
+
+### Download the Dataset
+
+1. **Create a Kaggle account** (if you don't have one): [kaggle.com](https://www.kaggle.com/)
+
+2. **Install Kaggle API** (optional, for command-line download):
+```bash
+pip install kaggle
+```
+
+3. **Download the dataset**:
+   - **Option A**: Manual download from [Driver Drowsiness Dataset (DDD)](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd)
+   - **Option B**: Using Kaggle API:
+   ```bash
+   # Set up Kaggle API credentials first
+   kaggle datasets download -d ismailnasri20/driver-drowsiness-dataset-ddd
+   unzip driver-drowsiness-dataset-ddd.zip -d ./dataset
+   ```
+
+4. **Extract the dataset** to your preferred location
+
+---
+
+### Verify Installation
+
+Run this Python script to verify all packages are installed correctly:
+
+```python
+import sys
+print(f"Python version: {sys.version}")
+
+try:
+    import tensorflow as tf
+    print(f"TensorFlow version: {tf.__version__}")
+except ImportError:
+    print("TensorFlow not installed!")
+
+try:
+    import cv2
+    print(f"OpenCV version: {cv2.__version__}")
+except ImportError:
+    print("OpenCV not installed!")
+
+try:
+    import numpy as np
+    print(f"NumPy version: {np.__version__}")
+except ImportError:
+    print("NumPy not installed!")
+
+try:
+    import matplotlib
+    print(f"Matplotlib version: {matplotlib.__version__}")
+except ImportError:
+    print("Matplotlib not installed!")
+
+print("\nAll required packages are installed successfully!")
+```
+
+Save this as `verify_installation.py` and run:
+```bash
+python verify_installation.py
+```
 
 ## Usage
 
 ### Training the Model
 
-1. Open the Jupyter notebook:
+#### Step 1: Launch Jupyter Notebook
+
+**Linux/macOS:**
 ```bash
+# Activate virtual environment if you created one
+source venv/bin/activate
+
+# Start Jupyter
 jupyter notebook drowsiness_detection.ipynb
 ```
 
-2. Update the dataset path in Cell 2:
-```python
-data_dir = "/path/to/your/Driver Drowsiness Dataset (DDD)"
+**Windows:**
+```cmd
+# Activate virtual environment if you created one
+venv\Scripts\activate
+
+# Start Jupyter
+jupyter notebook drowsiness_detection.ipynb
 ```
 
-3. Run all cells sequentially to:
-   - Load and preprocess the dataset
-   - Build the CNN model
-   - Train the model (10 epochs)
-   - Save the trained model as `drowsiness_cnn.h5`
+#### Step 2: Configure Dataset Path
 
-### Real-time Detection
+In the notebook, update **Cell 2** with your dataset path:
 
-To use the real-time drowsiness detection system:
+**Linux/macOS:**
+```python
+data_dir = "/home/username/datasets/Driver Drowsiness Dataset (DDD)"
+```
 
-1. Ensure you have a working webcam
-2. Run the webcam detection cells in the notebook (Cells 9-11)
-3. The system will:
-   - Detect faces using Haar Cascade
-   - Identify eyes in detected faces
-   - Predict drowsiness probability for each eye
-   - Display real-time alerts when drowsiness is detected
+**Windows:**
+```python
+data_dir = r"C:\Users\YourUsername\datasets\Driver Drowsiness Dataset (DDD)"
+```
 
-**Detection Parameters**:
-- `DROWSY_THRESHOLD`: 0.60 (probability threshold for drowsiness)
-- `FRAMES_THRESHOLD`: 15 (consecutive drowsy frames before alert)
+**Note**: Use raw string (`r""`) in Windows to handle backslashes correctly.
 
-**Controls**:
-- Press `q` to quit the detection window
+#### Step 3: Train the Model
+
+Run all cells sequentially (or select "Run All" from the Cell menu):
+
+1. **Cells 1-3**: Import libraries and load the dataset
+2. **Cell 4**: Visualize sample images
+3. **Cell 5**: Build the CNN architecture
+4. **Cell 6**: Train the model (takes ~5-10 minutes on GPU, ~30-60 minutes on CPU)
+5. **Cell 7**: View training history plots
+6. **Cell 8**: Save the trained model
+
+**Training Options:**
+- Modify `epochs = 10` in Cell 6 to train for more/fewer epochs
+- Adjust `batch_size = 32` in Cell 2 based on your available RAM
+
+---
+
+### Real-time Drowsiness Detection
+
+#### Prerequisites for Real-time Detection
+
+1. **Working webcam** connected to your computer
+2. **Trained model file** (`drowsiness_cnn.h5` or `drowsiness_model.keras`)
+3. **Good lighting** for better face detection
+
+#### Running Real-time Detection
+
+**Method 1: Using Jupyter Notebook**
+
+1. Restart the kernel (Kernel → Restart)
+2. Run **Cell 12** (imports)
+3. Run **Cell 13** (load model)
+4. Run **Cell 14** (helper functions)
+5. Run **Cell 15** (webcam detection loop)
+
+**Method 2: Standalone Python Script**
+
+Create a file `run_detection.py`:
+
+```python
+import cv2
+import numpy as np
+from tensorflow import keras
+
+# Load the trained model
+model = keras.models.load_model("drowsiness_cnn.h5")
+class_names = ['Drowsy', 'Non Drowsy']
+
+# Load Haar cascades
+face_cascade = cv2.CascadeClassifier(
+    cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+)
+eye_cascade = cv2.CascadeClassifier(
+    cv2.data.haarcascades + "haarcascade_eye.xml"
+)
+
+def preprocess_eye(eye_img, img_height=64, img_width=64):
+    eye_resized = cv2.resize(eye_img, (img_width, img_height))
+    eye_rgb = cv2.cvtColor(eye_resized, cv2.COLOR_BGR2RGB)
+    eye_array = eye_rgb.astype("float32") / 255.0
+    return np.expand_dims(eye_array, axis=0)
+
+def predict_drowsiness(eye_img):
+    x = preprocess_eye(eye_img)
+    prob = float(model.predict(x, verbose=0)[0][0])
+    return prob
+
+# Webcam capture
+cap = cv2.VideoCapture(0)
+DROWSY_THRESHOLD = 0.60
+FRAMES_THRESHOLD = 15
+drowsy_frames = 0
+
+print("Starting drowsiness detection... Press 'q' to quit.")
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    display = frame.copy()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    is_drowsy_this_frame = False
+
+    for (x, y, w, h) in faces:
+        cv2.rectangle(display, (x, y), (x+w, y+h), (255, 255, 0), 2)
+        roi_gray = gray[y:y+h, x:x+w]
+        roi_color = frame[y:y+h, x:x+w]
+        eyes = eye_cascade.detectMultiScale(roi_gray, 1.1, 3)
+
+        for (ex, ey, ew, eh) in eyes:
+            eye_img = roi_color[ey:ey+eh, ex:ex+ew]
+            prob = predict_drowsiness(eye_img)
+            label = f"Drowsy: {prob:.2f}"
+            color = (0, 0, 255) if prob >= DROWSY_THRESHOLD else (0, 255, 0)
+            cv2.rectangle(roi_color, (ex, ey), (ex+ew, ey+eh), color, 2)
+            cv2.putText(roi_color, label, (ex, ey - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+            if prob >= DROWSY_THRESHOLD:
+                is_drowsy_this_frame = True
+        break
+
+    if is_drowsy_this_frame:
+        drowsy_frames += 1
+    else:
+        drowsy_frames = 0
+
+    if drowsy_frames >= FRAMES_THRESHOLD:
+        cv2.putText(display, "WAKE UP! YOU ARE DROWSY!",
+                    (50, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0,
+                    (0, 0, 255), 3)
+
+    cv2.imshow("Drowsiness Detection", display)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+```
+
+Run the script:
+```bash
+python run_detection.py
+```
+
+#### Detection Parameters
+
+You can adjust these parameters in the code:
+
+```python
+DROWSY_THRESHOLD = 0.60    # Probability threshold (0.0-1.0)
+                           # Higher = more strict detection
+
+FRAMES_THRESHOLD = 15      # Consecutive frames before alert
+                           # Higher = fewer false alarms
+```
+
+#### Controls
+
+- **Press `q`**: Quit the detection window
+- **ESC**: Alternative quit method (may work on some systems)
+
+#### Troubleshooting Real-time Detection
+
+**Webcam not detected:**
+- **Linux**: Check `/dev/video*` devices exist and you have permissions
+  ```bash
+  sudo usermod -a -G video $USER
+  ```
+- **Windows**: Ensure no other application is using the webcam
+- **macOS**: Grant camera permissions in System Preferences
+
+**Poor detection accuracy:**
+- Ensure good lighting conditions
+- Position face 30-60cm from the camera
+- Avoid reflections on glasses
+- Ensure the trained model file is loaded correctly
+
+**Slow performance:**
+- Reduce `batch_size` in predictions
+- Lower webcam resolution
+- Use GPU acceleration (if available)
 
 ## Results
 
@@ -165,10 +579,20 @@ Drowsiness-Detection/
 ├── drowsiness_detection.ipynb    # Main Jupyter notebook with complete workflow
 ├── drowsiness_cnn.h5              # Trained model (HDF5 format)
 ├── drowsiness_model.keras         # Trained model (Keras native format)
+├── requirements.txt               # Python package dependencies
+├── verify_installation.py         # Script to verify installation
 ├── LICENSE                        # Project license
-├── README.md                      # This file
+├── README.md                      # This file (complete documentation)
 └── .gitignore                     # Git ignore rules
 ```
+
+### Quick Start Files
+
+After cloning the repository, you'll find these helpful files:
+
+- **[requirements.txt](requirements.txt)**: Install all dependencies with `pip install -r requirements.txt`
+- **[verify_installation.py](verify_installation.py)**: Run `python verify_installation.py` to check your setup
+- **[drowsiness_detection.ipynb](drowsiness_detection.ipynb)**: Main notebook for training and detection
 
 ## Model Files
 
