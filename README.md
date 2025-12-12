@@ -29,7 +29,7 @@ Get started in 5 minutes:
 
 2. **Clone and setup**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Man2Dev/Drowsiness-Detection
    cd Drowsiness-Detection
    pip install -r requirements.txt
    ```
