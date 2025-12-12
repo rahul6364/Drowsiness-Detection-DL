@@ -154,7 +154,7 @@ sudo dnf install mesa-libGL glib2 libSM libXext libXrender
 
 **Step 3: Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Man2Dev/Drowsiness-Detection
 cd Drowsiness-Detection
 ```
 
@@ -194,7 +194,7 @@ pip --version
 
 **Step 3: Clone the repository**
 ```cmd
-git clone <repository-url>
+git clone https://github.com/Man2Dev/Drowsiness-Detection
 cd Drowsiness-Detection
 ```
 
@@ -231,7 +231,7 @@ brew install python@3.11
 
 **Step 3: Clone the repository**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Man2Dev/Drowsiness-Detection
 cd Drowsiness-Detection
 ```
 
