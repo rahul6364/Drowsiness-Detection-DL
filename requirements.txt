@@ -1,21 +1,6 @@
-# Driver Drowsiness Detection - Python Dependencies
-# Install all packages: pip install -r requirements.txt
-
-# Deep Learning Framework
 tensorflow>=2.10.0
-
-# Computer Vision
 opencv-python>=4.5.0
-
-# Numerical Computing
 numpy>=1.19.0
-
-# Data Visualization
 matplotlib>=3.3.0
-
-# Jupyter Notebook Environment
 jupyter>=1.0.0
 ipykernel>=6.0.0
-
-# Optional: Kaggle API for dataset download
-# kaggle>=1.5.0
