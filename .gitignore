@@ -5,8 +5,8 @@
 data/
 
 # Trained models (large binary files)
-models/*.h5
-models/*.keras
+#models/*.h5
+#models/*.keras
 
 # Python
 __pycache__/
