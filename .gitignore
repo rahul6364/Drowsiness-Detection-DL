@@ -1,2 +1,33 @@
+# macOS
 .DS_Store
+
+# Dataset (too large for git)
 data/
+
+# Trained models (large binary files)
+models/*.h5
+models/*.keras
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
