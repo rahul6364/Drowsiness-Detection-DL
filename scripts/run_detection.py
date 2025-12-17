@@ -5,6 +5,10 @@ Real-time Driver Drowsiness Detection Script
 This script uses a pre-trained CNN model to detect driver drowsiness
 via webcam feed.
 
+FIXES APPLIED:
+- Convert BGR to RGB before prediction (model trained on RGB)
+- Remove double normalization (model has built-in Rescaling layer)
+
 Usage:
     python run_detection.py
 
@@ -35,6 +39,7 @@ def find_model():
     """Find the trained model file."""
     model_paths = [
         MODELS_DIR / "drowsiness_model.keras",
+        MODELS_DIR / "drowsiness_cnn.keras",
         MODELS_DIR / "drowsiness_cnn.h5",
     ]
     
@@ -44,9 +49,8 @@ def find_model():
     
     raise FileNotFoundError(
         f"Model not found. Please train the model first.\n"
-        f"Expected locations:\n"
-        f"  - {model_paths[0]}\n"
-        f"  - {model_paths[1]}"
+        f"Expected locations:\n" +
+        "\n".join(f"  - {p}" for p in model_paths)
     )
 
 
@@ -58,14 +62,28 @@ def load_class_names():
         with open(class_names_path, "r") as f:
             return json.load(f)
     
+    # Default: Class 0 = Drowsy, Class 1 = Non Drowsy
     return ["Drowsy", "Non Drowsy"]
 
 
 def preprocess_face(face_img, img_size=IMG_SIZE):
-    """Preprocess face image for model prediction."""
+    """
+    Preprocess face image for model prediction.
+    
+    IMPORTANT: The model includes a Rescaling(1./255) layer internally,
+    so we should NOT normalize here. Just resize and convert to RGB.
+    """
+    # Resize to model's expected input size
     resized = cv2.resize(face_img, img_size)
+    
+    # Convert BGR (OpenCV) to RGB (TensorFlow training format)
     rgb = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
-    normalized = rgb.astype("float32") / 255.0
+    
+    # Convert to float32 but DO NOT divide by 255
+    # The model's built-in Rescaling layer handles normalization
+    normalized = rgb.astype("float32")
+    
+    # Add batch dimension
     return np.expand_dims(normalized, axis=0)
 
 
@@ -93,7 +111,7 @@ def main():
         return 1
     
     window_name = "Driver Drowsiness Detection"
-    cv2.namedWindow(window_name)
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
     
     drowsy_frame_count = 0
     
@@ -101,7 +119,7 @@ def main():
     print("Press 'q' or close the window to quit.\n")
     
     try:
-        while cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) >= 1:
+        while True:
             ret, frame = cap.read()
             if not ret:
                 print("Error: Failed to read from webcam.")
@@ -121,29 +139,36 @@ def main():
             status_color = (255, 255, 255)  # White
             
             for (x, y, w, h) in faces:
-                # Draw face rectangle
+                # Draw face rectangle (green by default)
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 
                 # Extract face and predict
                 face_roi = frame[y:y+h, x:x+w]
                 preprocessed = preprocess_face(face_roi)
+                
+                # Get prediction probability
                 prob = float(model.predict(preprocessed, verbose=0)[0][0])
                 
-                # Determine drowsiness
+                # Model interpretation:
+                # prob close to 0 = Class 0 (Drowsy)
+                # prob close to 1 = Class 1 (Non Drowsy)
                 is_drowsy = prob < DROWSY_THRESHOLD
-                drowsiness_pct = (1 - prob) * 100 if class_names[0] == "Drowsy" else prob * 100
+                drowsiness_pct = (1 - prob) * 100  # Higher percentage = more drowsy
                 
                 if is_drowsy:
                     drowsy_frame_count += 1
                 else:
                     drowsy_frame_count = 0
                 
-                # Set status based on consecutive frames
+                # Set status based on consecutive drowsy frames
                 if drowsy_frame_count >= FRAMES_THRESHOLD:
                     status_text = f"DROWSY! WAKE UP! ({drowsiness_pct:.1f}%)"
                     status_color = (0, 0, 255)  # Red
+                    # Change rectangle to red for alert
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)
                 else:
-                    status_text = f"Awake ({100 - drowsiness_pct:.1f}%)"
+                    alertness = 100 - drowsiness_pct
+                    status_text = f"Awake ({alertness:.1f}% alert)"
                     status_color = (0, 255, 0)  # Green
                 
                 # Only process first detected face
@@ -163,8 +188,16 @@ def main():
             
             cv2.imshow(window_name, frame)
             
-            # Quit on 'q' key
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            # Check for quit key
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                break
+            
+            # Check if window was closed
+            try:
+                if cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) < 1:
+                    break
+            except cv2.error:
                 break
     
     finally:
