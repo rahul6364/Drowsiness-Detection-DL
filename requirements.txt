@@ -1,10 +1,27 @@
+# Driver Drowsiness Detection - Requirements
 # Python 3.11 recommended for best compatibility
 
+# Deep Learning
 tensorflow>=2.10.0
+
+# Computer Vision
 opencv-python>=4.5.0
+
+# Data Processing
 numpy>=1.19.0
+pandas>=1.3.0
+
+# Visualization
 matplotlib>=3.3.0
 seaborn>=0.12.0
+
+# Machine Learning (Traditional ML models)
 scikit-learn>=1.0.0
+
+# Jupyter Environment
 jupyter>=1.0.0
 ipykernel>=6.0.0
+
+# Optional: For Apple Silicon (M1/M2/M3 Macs)
+# tensorflow-macos
+# tensorflow-metal
