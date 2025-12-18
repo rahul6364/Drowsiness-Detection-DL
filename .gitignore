@@ -1,33 +1,161 @@
-# macOS
-.DS_Store
+# Driver Drowsiness Detection Project - .gitignore
 
-# Dataset (too large for git)
+# =============================================================================
+# DATA FILES (Do not commit large datasets)
+# =============================================================================
 data/
+*.zip
+*.tar.gz
+*.tar
+*.rar
 
-# Trained models (large binary files)
-#models/*.h5
-#models/*.keras
+# Dataset folders
+Driver Drowsiness Dataset*/
+DDD/
 
-# Python
+# =============================================================================
+# MODEL FILES
+# =============================================================================
+# Note: Model files (.h5, .keras) are included in this repository
+# as they are not too large and are needed for the data product demo
+# Uncomment below if models become too large:
+# *.h5
+# *.keras
+# *.pkl
+
+# =============================================================================
+# PYTHON
+# =============================================================================
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-venv/
-env/
-ENV/
-*.egg-info/
-dist/
-build/
 
-# Jupyter Notebook
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+.env/
+
+# =============================================================================
+# JUPYTER NOTEBOOK
+# =============================================================================
+# Checkpoint files
 .ipynb_checkpoints/
 */.ipynb_checkpoints/*
 
-# IDEs
+# Jupyter Notebook output
+*.ipynb_output/
+
+# =============================================================================
+# IDE / EDITOR
+# =============================================================================
+# VSCode
 .vscode/
+*.code-workspace
+
+# PyCharm
 .idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
 *.swp
 *.swo
 *~
+
+# =============================================================================
+# OS GENERATED FILES
+# =============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# =============================================================================
+# LOGS AND TEMPORARY FILES
+# =============================================================================
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+
+# TensorFlow logs
+tensorboard_logs/
+lightning_logs/
+
+# =============================================================================
+# KAGGLE
+# =============================================================================
+.kaggle/
+kaggle.json
+
+# =============================================================================
+# MISCELLANEOUS
+# =============================================================================
+# Secrets and credentials
+*.key
+*.pem
+secrets.yaml
+secrets.json
+.env.local
+.env.*.local
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# pytest
+.pytest_cache/
+
+# mypy
+.mypy_cache/
