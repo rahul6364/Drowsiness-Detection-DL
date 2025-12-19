@@ -41,7 +41,7 @@ Yes, we successfully developed models achieving **>99% validation accuracy**. Ou
 
 Get started in 5 minutes:
 
-1. **Install Python 3.8+** for your OS ([Linux](#linux-ubuntudebianfedora) | [Windows](#windows) | [macOS](#macos))
+1. **Install Python 3.11** for your OS ([Linux](#linux-ubuntudebianfedora) | [Windows](#windows) | [macOS](#macos))
 
 2. **Clone and setup**:
    ```bash
