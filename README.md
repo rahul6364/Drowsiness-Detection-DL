@@ -114,10 +114,20 @@ Four different machine learning models were implemented:
 - Created ROC curves with AUC scores
 - Performed comprehensive 4-model comparison
 
-### Phase 6: Deployment
+### Phase 6: Eye State Detection Model
+- Trained MobileNetV2 on Open-Closed Eyes dataset
+- Implemented transfer learning from ImageNet
+- Achieved high accuracy on eye state classification
+
+### Phase 7: Integrated Detection System
+- Combined face model (30%) + eye model (70%) using weighted fusion
+- Implemented automatic eye region extraction from face
+- Alert threshold: Combined score >= 70% triggers drowsiness warning
+
+### Phase 8: Deployment
 - Implemented real-time webcam detection system
-- Integrated best model (CNN) for production use
-- Created standalone detection script
+- Integrated both models for robust detection
+- Created standalone detection scripts
 
 ---
 
@@ -125,6 +135,7 @@ Four different machine learning models were implemented:
 
 - **Real-time Detection:** Processes live webcam feed to detect drowsiness
 - **Multi-Model Comparison:** Implements and compares **4 different ML approaches** (CNN, Random Forest, SVM, MobileNetV2)
+- **Integrated Detection:** Combines face and eye models using weighted fusion (30% face + 70% eye)
 - **Dual Detection Approach:** Supports both full-face and eye-specific detection
 - **High Accuracy:** Achieves >99% validation accuracy on test datasets
 - **Framework Diversity:** Demonstrates proficiency in both TensorFlow and PyTorch
@@ -358,6 +369,7 @@ Drowsiness-Detection/
 │       └── test/
 ├── scripts/
 │   ├── run_detection.py              # Standalone detection script
+│   ├── integrated_detection.py       # Combined face + eye detection
 │   └── verify_installation.py        # Installation verification
 ├── requirements.txt                  # Python dependencies
 ├── .gitignore                        # Git ignore rules
@@ -394,7 +406,7 @@ Drowsiness-Detection/
 
 ## Future Improvements
 
-- [ ] Ensemble model combining face and eye predictions
+- [x] Ensemble model combining face and eye predictions (Implemented: 30% face + 70% eye weighted fusion)
 - [ ] Add audio alerts for better driver notification
 - [ ] Mobile deployment using TensorFlow Lite and ONNX
 - [ ] Multi-face detection for passenger monitoring
