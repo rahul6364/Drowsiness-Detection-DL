@@ -17,7 +17,13 @@ Controls:
 """
 
 import json
+import os
+import sys
 from pathlib import Path
+
+# Force TensorFlow to use CPU to avoid CUDA compatibility issues
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
 import cv2
 import numpy as np
@@ -104,10 +110,18 @@ def main():
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
     
-    # Initialize webcam
-    cap = cv2.VideoCapture(0)
+    # Initialize video source (webcam or video file)
+    video_source = sys.argv[1] if len(sys.argv) > 1 else 0
+    if isinstance(video_source, str):
+        print(f"Opening video file: {video_source}")
+    else:
+        print("Opening webcam...")
+    cap = cv2.VideoCapture(video_source)
     if not cap.isOpened():
-        print("Error: Webcam not found. Please check your camera connection.")
+        if isinstance(video_source, str):
+            print(f"Error: Could not open video file: {video_source}")
+        else:
+            print("Error: Webcam not found. Please check your camera connection.")
         return 1
     
     window_name = "Driver Drowsiness Detection"
@@ -122,6 +136,10 @@ def main():
         while True:
             ret, frame = cap.read()
             if not ret:
+                if isinstance(video_source, str):
+                    # Loop video file
+                    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    continue
                 print("Error: Failed to read from webcam.")
                 break
             

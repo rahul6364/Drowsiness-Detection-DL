@@ -443,14 +443,21 @@ def run_detection(face_model, eye_model, face_cascade):
 
     Press 'q' to quit.
     """
-    print("Starting webcam...")
-    cap = cv2.VideoCapture(0)
+    video_source = sys.argv[1] if len(sys.argv) > 1 else 0
+    if isinstance(video_source, str):
+        print(f"Opening video file: {video_source}")
+    else:
+        print("Starting webcam...")
+    cap = cv2.VideoCapture(video_source)
 
     if not cap.isOpened():
-        print("Error: Could not open webcam")
+        if isinstance(video_source, str):
+            print(f"Error: Could not open video file: {video_source}")
+        else:
+            print("Error: Could not open webcam")
         return
 
-    print("✓ Webcam opened successfully")
+    print("✓ Video source opened successfully")
     print("\nControls:")
     print("  Press 'q' to quit")
     print("\nDetection parameters:")
@@ -469,6 +476,10 @@ def run_detection(face_model, eye_model, face_cascade):
         while True:
             ret, frame = cap.read()
             if not ret:
+                if isinstance(video_source, str):
+                    # Loop video file
+                    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    continue
                 print("Error: Failed to capture frame")
                 break
 

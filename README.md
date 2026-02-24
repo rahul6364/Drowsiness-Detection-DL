@@ -41,12 +41,14 @@ Yes, we successfully developed models achieving **>99% validation accuracy**. Ou
 
 Get started in 5 minutes:
 
-1. **Install Python 3.11** for your OS ([Linux](#linux-ubuntudebianfedora) | [Windows](#windows) | [macOS](#macos))
+1. **Install Python 3.11 or 3.12** for your OS ([Linux](#linux-ubuntudebianfedora) | [Windows](#windows) | [macOS](#macos))
 
 2. **Clone and setup**:
    ```bash
    git clone https://github.com/Man2Dev/Drowsiness-Detection
    cd Drowsiness-Detection
+   python3.12 -m venv venv
+   source venv/bin/activate  # Linux/macOS (or venv\Scripts\activate on Windows)
    pip install -r requirements.txt
    ```
 
@@ -68,7 +70,11 @@ Get started in 5 minutes:
 
 6. **Run real-time detection** (using pre-trained model):
    ```bash
-   python scripts/run_detection.py  # Press 'q' to quit
+   # Webcam
+   python scripts/run_detection.py
+
+   # Or with a video file
+   python scripts/run_detection.py path/to/video.mp4
    ```
 
 ---
@@ -263,7 +269,7 @@ This project uses **two complementary datasets** from Kaggle:
 
 ### System Requirements
 
-- **Python:** 3.8 or higher (recommended: Python 3.11)
+- **Python:** 3.8 - 3.12 (recommended: Python 3.11 or 3.12). Python 3.13+ is **not supported** by TensorFlow.
 - **RAM:** Minimum 4GB (8GB recommended for training)
 - **GPU:** Optional but recommended for deep learning models
 - **Webcam:** Required for real-time detection
@@ -294,11 +300,13 @@ jupyter>=1.0.0
 
 2. Create virtual environment (recommended):
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/macOS
+   python3.12 -m venv venv        # Use Python 3.12 explicitly
+   source venv/bin/activate        # Linux/macOS
    # or
-   venv\Scripts\activate  # Windows
+   venv\Scripts\activate           # Windows
    ```
+
+   > **Important:** If your system default Python is 3.13+, you **must** specify `python3.12` or `python3.11` when creating the venv. TensorFlow does not support Python 3.13+.
 
 3. Install dependencies:
    ```bash
@@ -339,8 +347,23 @@ jupyter>=1.0.0
 
 ### Real-time Detection
 
+**Using webcam (default):**
 ```bash
 python scripts/run_detection.py
+```
+
+**Using a video file:**
+```bash
+python scripts/run_detection.py path/to/video.mp4
+```
+
+**Integrated detection (face + eye models combined):**
+```bash
+# Webcam
+python scripts/integrated_detection.py
+
+# Video file
+python scripts/integrated_detection.py path/to/video.mp4
 ```
 
 Press 'q' or close the window to quit.
