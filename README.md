@@ -1,243 +1,74 @@
-# Driver Drowsiness Detection using Machine Learning
+# DriverGuard AI
 
-A real-time drowsiness detection system implementing multiple machine learning approaches following the **CRISP-DM (Cross-Industry Standard Process for Data Mining)** methodology. This project compares **four machine learning models** (CNN, Random Forest, SVM, and MobileNetV2) for driver fatigue detection through facial and eye image analysis.
+This repository keeps the original machine learning detector in place and adds a modern FastAPI + React dashboard around it.
 
-## Authors
+## Project structure
 
-- **Mohammadreza Hendiani**
-- **Aakash Vashist**
-- **Negin Ghanei**
+- `scripts/integrated_detection.py` contains the original working ML detection flow.
+- `models/` stores the existing TensorFlow and PyTorch weights.
+- `backend/` exposes the detector through a FastAPI server and WebSocket stream.
+- `frontend/` contains the React + Vite + Tailwind dashboard.
 
-## Table of Contents
+## Architecture
 
-- [Research Question](#research-question)
-- [Quick Start Guide](#quick-start-guide)
-- [Overview](#overview)
-- [CRISP-DM Methodology](#crisp-dm-methodology)
-- [Features](#features)
-- [Datasets](#datasets)
-- [Models Implemented](#models-implemented)
-- [Model Comparison Results](#model-comparison-results)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Troubleshooting](#troubleshooting)
-- [Future Improvements](#future-improvements)
-- [License](#license)
+Browser -> React dashboard -> WebSocket -> FastAPI -> existing OpenCV + CNN + MobileNetV2 detector -> webcam -> results back to UI.
 
----
+## Keep the existing model logic intact
 
-## Research Question
+The current weights and inference flow are preserved:
 
-> **Can we accurately classify driver drowsiness states (Drowsy vs. Non-Drowsy) using facial image analysis, and which machine learning approach provides the best balance of accuracy and efficiency for real-time deployment?**
+- Face model: TensorFlow CNN
+- Eye model: MobileNetV2 in PyTorch
+- Fusion: 30% face + 70% eye
+- Alert threshold: 70%
 
-### Answer
+The backend reuses these values rather than retraining or replacing them.
 
-Yes, we successfully developed models achieving **>99% validation accuracy**. Our comparison of four different approaches shows that the CNN model provides the best balance of accuracy and real-time performance, while the MobileNetV2 eye-detection model offers a lightweight alternative for embedded deployment.
+## Run the backend
 
----
+```bash
+cd backend
+python -m venv .venv
+# Windows
+# .venv\Scripts\activate
+# macOS/Linux
+# source .venv/bin/activate
+pip install -r requirements.txt
+python main.py
+```
 
-## Quick Start Guide
+The API runs at:
 
-Get started in 5 minutes:
+- http://localhost:8000/health
+- http://localhost:8000/api/system
+- ws://localhost:8000/ws
 
-1. **Install Python 3.11 or 3.12** for your OS ([Linux](#linux-ubuntudebianfedora) | [Windows](#windows) | [macOS](#macos))
+## Run the frontend
 
-2. **Clone and setup**:
-   ```bash
-   git clone https://github.com/Man2Dev/Drowsiness-Detection
-   cd Drowsiness-Detection
-   python3.12 -m venv venv
-   source venv/bin/activate  # Linux/macOS (or venv\Scripts\activate on Windows)
-   pip install -r requirements.txt
-   ```
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-3. **Verify installation**:
-   ```bash
-   python scripts/verify_installation.py
-   ```
+Open the Vite URL shown in the terminal, typically http://localhost:5173.
 
-4. **Download datasets** from Kaggle:
-   - [Driver Drowsiness Dataset (DDD)](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd) → extract to `data/`
-   - [Open-Closed Eyes Dataset](https://www.kaggle.com/datasets/sehriyarmemmedli/open-closed-eyes-dataset) → extract to `data/archive/`
+## Notes
 
-5. **Train models**:
-   ```bash
-   cd notebooks
-   jupyter notebook drowsiness_detection.ipynb
-   # Run all cells through Phase 5
-   ```
+- The backend loads the models once during startup and reuses them for every frame.
+- The WebSocket sends structured detection results including the drowsiness score, alert state, eye status, and a base64 JPEG frame.
+- The original standalone detection script remains runnable independently.
 
-6. **Run real-time detection** (using pre-trained model):
-   ```bash
-   # Webcam
-   python scripts/run_detection.py
+## Existing ML script
 
-   # Or with a video file
-   python scripts/run_detection.py path/to/video.mp4
-   ```
+The original project script can still be run directly:
 
----
+```bash
+python scripts/integrated_detection.py
+```
 
-## Overview
+This keeps the original OpenCV window workflow working while the dashboard uses the new web integration layer.
 
-Driver drowsiness is a major cause of road accidents worldwide, responsible for approximately 20% of all road crashes. This project implements a machine learning-based solution to detect drowsiness in real-time using a webcam feed. The system analyzes both full facial images and eye states to determine if a driver is becoming drowsy and triggers an alert to prevent potential accidents.
-
----
-
-## CRISP-DM Methodology
-
-This project follows the six phases of CRISP-DM (Cross-Industry Standard Process for Data Mining):
-
-### Phase 1: Business & Data Understanding
-- Defined research question and success criteria
-- Identified two complementary datasets (DDD for faces, Open-Closed Eyes for eye states)
-- Established binary classification problem (Drowsy vs. Non-Drowsy)
-
-### Phase 2: Data Preparation
-- **DDD Dataset:** Loaded and preprocessed 41,793 face images
-- **Eyes Dataset:** Loaded and preprocessed 174,756 eye images
-- Applied data augmentation (rotation, flipping, contrast adjustment)
-- Split data: 80% training, 20% validation
-- Extracted flattened features for traditional ML models
-
-### Phase 3: Exploratory Data Analysis (EDA)
-- Analyzed class distribution (balanced dataset)
-- Visualized sample images from both classes
-- Examined pixel intensity distributions
-- Generated statistical summaries
-
-### Phase 4: Modeling
-Four different machine learning models were implemented:
-- **Model 1:** Convolutional Neural Network (CNN) - TensorFlow/Keras
-- **Model 2:** Random Forest Classifier - scikit-learn
-- **Model 3:** Support Vector Machine (SVM) - scikit-learn
-- **Model 4:** MobileNetV2 Eye State CNN - PyTorch
-
-### Phase 5: Evaluation
-- Calculated accuracy, precision, recall, F1-score for all models
-- Generated confusion matrices
-- Created ROC curves with AUC scores
-- Performed comprehensive 4-model comparison
-
-### Phase 6: Eye State Detection Model
-- Trained MobileNetV2 on Open-Closed Eyes dataset
-- Implemented transfer learning from ImageNet
-- Achieved high accuracy on eye state classification
-
-### Phase 7: Integrated Detection System
-- Combined face model (30%) + eye model (70%) using weighted fusion
-- Implemented automatic eye region extraction from face
-- Alert threshold: Combined score >= 70% triggers drowsiness warning
-
-### Phase 8: Deployment
-- Implemented real-time webcam detection system
-- Integrated both models for robust detection
-- Created standalone detection scripts
-
----
-
-## Features
-
-- **Real-time Detection:** Processes live webcam feed to detect drowsiness
-- **Multi-Model Comparison:** Implements and compares **4 different ML approaches** (CNN, Random Forest, SVM, MobileNetV2)
-- **Integrated Detection:** Combines face and eye models using weighted fusion (30% face + 70% eye)
-- **Dual Detection Approach:** Supports both full-face and eye-specific detection
-- **High Accuracy:** Achieves >99% validation accuracy on test datasets
-- **Framework Diversity:** Demonstrates proficiency in both TensorFlow and PyTorch
-- **Data Augmentation:** Implements rotation, flipping, and contrast adjustment
-- **Visual Alerts:** Provides on-screen warnings when drowsiness is detected
-- **Haar Cascade Integration:** Uses OpenCV's face detection for preprocessing
-- **Comprehensive Evaluation:** Includes confusion matrices, ROC curves, and classification reports
-
----
-
-## Datasets
-
-This project uses **two complementary datasets** from Kaggle:
-
-### 1. Driver Drowsiness Dataset (DDD)
-**Link:** [Driver Drowsiness Dataset (DDD)](https://www.kaggle.com/datasets/ismailnasri20/driver-drowsiness-dataset-ddd)
-
-| Attribute | Value |
-|-----------|-------|
-| Total Images | 41,793 |
-| Classes | 2 (Drowsy, Non-Drowsy) |
-| Training Set | 33,435 images (80%) |
-| Validation Set | 8,358 images (20%) |
-| Image Size | 64×64 pixels (resized) |
-| Use | Full-face drowsiness detection |
-
-### 2. Open-Closed Eyes Dataset
-**Link:** [Open-Closed Eyes Dataset](https://www.kaggle.com/datasets/sehriyarmemmedli/open-closed-eyes-dataset)
-
-| Attribute | Value |
-|-----------|-------|
-| Training Images | 139,804 (106,482 open + 33,322 closed) |
-| Validation Images | 27,961 |
-| Test Images | 6,991 |
-| Classes | 2 (Open = Awake, Closed = Drowsy) |
-| Image Size | 224×224 pixels (MobileNetV2 standard) |
-| Use | Eye-specific state detection |
-
----
-
-## Models Implemented
-
-### Model 1: Convolutional Neural Network (CNN) - TensorFlow
-
-**Justification:** CNNs are the gold standard for image classification, automatically learning hierarchical features from raw pixels. They can learn from low-level edges to high-level patterns, making them ideal for facial feature analysis.
-
-**Architecture:**
-- Input: 64×64×3 RGB images
-- Data Augmentation Layer (flip, rotation, contrast)
-- 3 Convolutional blocks (32→64→128 filters)
-- MaxPooling after each conv block
-- Dropout (50%) for regularization
-- Dense layer (128 units)
-- Sigmoid output for binary classification
-
-**Parameters:** ~1.1M trainable parameters
-
-### Model 2: Random Forest Classifier
-
-**Justification:** Ensemble method combining multiple decision trees. Robust to overfitting, handles high-dimensional data well, and provides feature importance insights. Serves as a strong baseline for comparison.
-
-**Configuration:**
-- 100 decision trees
-- Max depth: 20
-- Min samples split: 5
-- Min samples leaf: 2
-
-### Model 3: Support Vector Machine (SVM)
-
-**Justification:** Effective for binary classification with high-dimensional data. Uses RBF kernel to capture non-linear relationships in the data.
-
-**Configuration:**
-- Kernel: RBF (Radial Basis Function)
-- C (regularization): 1.0
-- Feature scaling: StandardScaler
-
-### Model 4: MobileNetV2 Eye State CNN (PyTorch)
-
-**Justification:** Lightweight architecture optimized for mobile and embedded devices. Uses transfer learning from ImageNet for robust feature extraction. Focuses specifically on eye states for fine-grained detection.
-
-**Architecture:**
-- Base: MobileNetV2 (ImageNet pre-trained)
-- Modified final layer: 1280 → 2 classes
-- Framework: PyTorch
-
-**Configuration:**
-- Optimizer: Adam (lr=0.001)
-- Loss: CrossEntropyLoss
-- LR Scheduler: ReduceLROnPlateau
-- Data Augmentation: HorizontalFlip, Rotation, ColorJitter
-
-**Parameters:** ~2.2M trainable parameters
-
----
-
-## Model Comparison Results
 
 | Model | Dataset | Framework | Accuracy | Precision | Recall | F1-Score | AUC |
 |-------|---------|-----------|----------|-----------|--------|----------|-----|
