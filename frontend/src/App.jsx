@@ -63,6 +63,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const socketRef = useRef(null)
   const timerRef = useRef(null)
+  const alertAudioRef = useRef(null)
 
   const currentStatus = prettyStatus(status)
   const chartMax = useMemo(() => Math.max(100, ...chartData.map((item) => item.score), 70), [chartData])
@@ -108,14 +109,41 @@ function App() {
   }
 
   const toggleMute = async () => {
+    // Toggle locally immediately so sound stops/starts right away
+    const next = !muted
+    setMuted(next)
+    // Also sync with backend (best-effort)
     try {
-      const res = await fetch(`${API_BASE}/api/mute`, { method: 'POST' })
-      const next = await res.json()
-      setMuted(Boolean(next.muted))
-    } catch (error) {
-      setSocketError(error.message)
+      await fetch(`${API_BASE}/api/mute`, { method: 'POST' })
+    } catch (_) {
+      // backend sync failed; local mute state still applied
     }
   }
+
+  // Initialize alert audio on mount
+  useEffect(() => {
+    const audio = new Audio('/alert.mp3')
+    audio.loop = true
+    alertAudioRef.current = audio
+    return () => {
+      audio.pause()
+      audio.src = ''
+    }
+  }, [])
+
+  // Play / stop alert sound based on alertActive & muted
+  useEffect(() => {
+    const audio = alertAudioRef.current
+    if (!audio) return
+    if (alertActive && !muted) {
+      audio.play().catch(() => {
+        // autoplay may be blocked; user interaction required first
+      })
+    } else {
+      audio.pause()
+      audio.currentTime = 0
+    }
+  }, [alertActive, muted])
 
   useEffect(() => {
     const fetchSystem = async () => {
